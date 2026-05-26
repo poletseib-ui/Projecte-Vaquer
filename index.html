@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow" id="channelLabel">ThingSpeak</p>
+        <h1 id="appTitle">Dashboard</h1>
+      </div>
+      <button id="refreshButton" type="button">Actualizar</button>
+    </header>
+
+    <section class="site-editor" aria-label="Nombre del sitio">
+      <label for="siteNameInput">Sitio del sensor</label>
+      <div class="site-editor-row">
+        <input id="siteNameInput" type="text" placeholder="Ejemplo: Nave 1 - Cuadro principal">
+        <button id="saveSiteNameButton" type="button">Guardar nombre</button>
+      </div>
+      <small>El nombre se guarda en este dispositivo.</small>
+    </section>
+
+    <section id="status" class="status" aria-live="polite">Cargando datos...</section>
+
+    <section class="last-reading" aria-label="Ultima lectura">
+      <article class="card card-primary">
+        <span>Ultima lectura</span>
+        <strong id="lastValue">--</strong>
+        <small id="lastTime">--</small>
+      </article>
+    </section>
+
+    <section class="cards stats-cards" aria-label="Resumen de lecturas">
+      <article class="card">
+        <span>Maximo</span>
+        <strong id="maxValue">--</strong>
+      </article>
+      <article class="card">
+        <span>Minimo</span>
+        <strong id="minValue">--</strong>
+      </article>
+      <article class="card">
+        <span>Promedio</span>
+        <strong id="avgValue">--</strong>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Ultimos 10 valores</h2>
+          <p>Voltage 1 representado en kV</p>
+        </div>
+      </div>
+      <div id="chart" class="chart" role="img" aria-label="Grafico de los ultimos 10 valores de Voltage 1"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Lecturas</h2>
+          <p>Fecha y hora ajustadas a horario espanol</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha y hora</th>
+              <th>Voltage 1</th>
+            </tr>
+          </thead>
+          <tbody id="readingsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

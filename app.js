@@ -1,0 +1,267 @@
+const CONFIG = {
+  defaultAppName: "Dashboard 1K",
+  channelId: "2860284",
+  fieldName: "field1",
+  readApiKey: "UU4HPDW176EZ2FLK",
+  results: 10,
+  timeOffsetHours: 2,
+};
+
+const state = {
+  readings: [],
+  siteName: "",
+};
+
+const elements = {
+  status: document.getElementById("status"),
+  appTitle: document.getElementById("appTitle"),
+  channelLabel: document.getElementById("channelLabel"),
+  siteNameInput: document.getElementById("siteNameInput"),
+  saveSiteNameButton: document.getElementById("saveSiteNameButton"),
+  refreshButton: document.getElementById("refreshButton"),
+  lastValue: document.getElementById("lastValue"),
+  lastTime: document.getElementById("lastTime"),
+  maxValue: document.getElementById("maxValue"),
+  minValue: document.getElementById("minValue"),
+  avgValue: document.getElementById("avgValue"),
+  chart: document.getElementById("chart"),
+  readingsTable: document.getElementById("readingsTable"),
+};
+
+function renderStaticText() {
+  const appName = state.siteName || CONFIG.defaultAppName;
+
+  document.title = appName;
+  elements.appTitle.textContent = appName;
+  elements.channelLabel.textContent = `ThingSpeak - Canal ${CONFIG.channelId}`;
+  elements.siteNameInput.value = state.siteName;
+}
+
+function loadSiteName() {
+  state.siteName = localStorage.getItem("koniSiteName") || "";
+}
+
+function saveSiteName() {
+  state.siteName = elements.siteNameInput.value.trim();
+
+  if (state.siteName) {
+    localStorage.setItem("koniSiteName", state.siteName);
+  } else {
+    localStorage.removeItem("koniSiteName");
+  }
+
+  renderStaticText();
+}
+
+function apiUrl() {
+  const params = new URLSearchParams({
+    api_key: CONFIG.readApiKey,
+    results: String(CONFIG.results),
+  });
+
+  return `https://api.thingspeak.com/channels/${CONFIG.channelId}/feeds.json?${params}`;
+}
+
+function addSpanishOffset(date) {
+  return new Date(date.getTime() + CONFIG.timeOffsetHours * 60 * 60 * 1000);
+}
+
+function formatKV(value) {
+  return `${(value / 1000).toFixed(1)} kV`;
+}
+
+function formatDateTime(date) {
+  return new Intl.DateTimeFormat("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
+function formatShortTime(date) {
+  return new Intl.DateTimeFormat("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+async function loadReadings() {
+  elements.status.classList.remove("error");
+  elements.status.textContent = "Cargando datos...";
+  elements.refreshButton.disabled = true;
+
+  try {
+    const response = await fetch(apiUrl(), { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`ThingSpeak respondió con estado ${response.status}`);
+    }
+
+    const payload = await response.json();
+    const feeds = Array.isArray(payload.feeds) ? payload.feeds : [];
+
+    state.readings = feeds
+      .map((feed) => {
+        const rawValue = Number(feed[CONFIG.fieldName]);
+
+        if (!Number.isFinite(rawValue)) {
+          return null;
+        }
+
+        const utcTime = new Date(feed.created_at);
+
+        return {
+          value: rawValue,
+          valueKV: rawValue / 1000,
+          time: addSpanishOffset(utcTime),
+        };
+      })
+      .filter(Boolean);
+
+    if (state.readings.length === 0) {
+      throw new Error("No hay lecturas válidas para mostrar.");
+    }
+
+    render();
+    elements.status.textContent = `Actualizado: ${formatDateTime(new Date())}`;
+  } catch (error) {
+    elements.status.textContent = `Error al cargar datos: ${error.message}`;
+    elements.status.classList.add("error");
+  } finally {
+    elements.refreshButton.disabled = false;
+  }
+}
+
+function render() {
+  renderCards();
+  renderChart();
+  renderTable();
+}
+
+function renderCards() {
+  const readings = state.readings;
+  const values = readings.map((item) => item.value);
+  const last = readings[readings.length - 1];
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
+
+  elements.lastValue.textContent = formatKV(last.value);
+  elements.lastTime.textContent = formatDateTime(last.time);
+  elements.maxValue.textContent = formatKV(max);
+  elements.minValue.textContent = formatKV(min);
+  elements.avgValue.textContent = formatKV(avg);
+}
+
+function renderChart() {
+  const readings = state.readings;
+  const width = 940;
+  const height = 430;
+  const padding = {
+    top: 36,
+    right: 26,
+    bottom: 86,
+    left: 64,
+  };
+
+  const minY = Math.min(...readings.map((item) => item.valueKV));
+  const maxY = Math.max(...readings.map((item) => item.valueKV));
+  const rangeY = maxY - minY || 1;
+  const chartMinY = minY - rangeY * 0.2;
+  const chartMaxY = maxY + rangeY * 0.28;
+  const chartRangeY = chartMaxY - chartMinY;
+  const innerWidth = width - padding.left - padding.right;
+  const innerHeight = height - padding.top - padding.bottom;
+
+  const xFor = (index) => {
+    if (readings.length === 1) {
+      return padding.left + innerWidth / 2;
+    }
+
+    return padding.left + (index / (readings.length - 1)) * innerWidth;
+  };
+
+  const yFor = (value) => {
+    return padding.top + ((chartMaxY - value) / chartRangeY) * innerHeight;
+  };
+
+  const points = readings.map((item, index) => ({
+    ...item,
+    x: xFor(index),
+    y: yFor(item.valueKV),
+  }));
+
+  const path = points
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+    .join(" ");
+
+  const yTicks = 4;
+  const gridLines = Array.from({ length: yTicks + 1 }, (_, index) => {
+    const value = chartMinY + (chartRangeY / yTicks) * index;
+    const y = yFor(value);
+
+    return `
+      <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" class="grid-line"></line>
+      <text x="${padding.left - 10}" y="${y + 5}" class="axis-label" text-anchor="end">${value.toFixed(1)}</text>
+    `;
+  }).join("");
+
+  const pointNodes = points.map((point, index) => `
+    <g>
+      <circle cx="${point.x}" cy="${point.y}" r="6" class="point"></circle>
+      <text x="${point.x}" y="${point.y - 13}" class="value-label" text-anchor="middle">${point.valueKV.toFixed(1)} kV</text>
+      <text x="${point.x}" y="${height - 52}" class="x-label" text-anchor="middle" transform="rotate(-35 ${point.x} ${height - 52})">${formatShortTime(point.time)}</text>
+      <text x="${point.x}" y="${height - 16}" class="index-label" text-anchor="middle">${index + 1}</text>
+    </g>
+  `).join("");
+
+  elements.chart.innerHTML = `
+    <svg viewBox="0 0 ${width} ${height}" aria-hidden="true">
+      <style>
+        .grid-line { stroke: #d9e2ef; stroke-width: 1; }
+        .axis { stroke: #667085; stroke-width: 1.3; }
+        .line { fill: none; stroke: #062b67; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .point { fill: #ffffff; stroke: #062b67; stroke-width: 4; }
+        .axis-label { fill: #667085; font-size: 14px; font-weight: 700; }
+        .value-label { fill: #062b67; font-size: 15px; font-weight: 700; }
+        .x-label { fill: #172033; font-size: 13px; font-weight: 700; }
+        .index-label { fill: #667085; font-size: 12px; }
+      </style>
+      ${gridLines}
+      <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" class="axis"></line>
+      <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" class="axis"></line>
+      <path d="${path}" class="line"></path>
+      ${pointNodes}
+      <text x="18" y="${padding.top + 8}" class="axis-label" transform="rotate(-90 18 ${padding.top + 8})">kV</text>
+    </svg>
+  `;
+}
+
+function renderTable() {
+  elements.readingsTable.innerHTML = state.readings
+    .map((item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${formatDateTime(item.time)}</td>
+        <td><strong>${formatKV(item.value)}</strong></td>
+      </tr>
+    `)
+    .join("");
+}
+
+elements.refreshButton.addEventListener("click", loadReadings);
+elements.saveSiteNameButton.addEventListener("click", saveSiteName);
+elements.siteNameInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    saveSiteName();
+  }
+});
+
+loadSiteName();
+renderStaticText();
+loadReadings();
