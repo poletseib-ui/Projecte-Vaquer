@@ -1,12 +1,14 @@
 :root {
   color-scheme: light;
-  --bg: #f4f7fb;
+  --bg: #edf5ef;
   --panel: #ffffff;
-  --text: #172033;
-  --muted: #667085;
-  --blue: #062b67;
-  --blue-soft: #eaf2ff;
-  --line: #d9e2ef;
+  --text: #173126;
+  --muted: #607368;
+  --blue: #073f5f;
+  --blue-soft: #e8f6ef;
+  --green: #2f6b3f;
+  --green-dark: #174b2b;
+  --line: #cfddd2;
   --danger: #b42318;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -17,7 +19,9 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(84, 142, 88, 0.18), transparent 34rem),
+    linear-gradient(180deg, #f7fbf6 0%, var(--bg) 55%, #e7f0ea 100%);
   color: var(--text);
 }
 
@@ -33,11 +37,15 @@ body {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 14px;
+  border: 1px solid #c5d8ca;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffffff 0%, #eef8f1 52%, #e8f4ff 100%);
+  padding: 18px;
 }
 
 .eyebrow {
   margin: 0 0 4px;
-  color: var(--muted);
+  color: var(--green-dark);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -50,7 +58,7 @@ p {
 }
 
 h1 {
-  color: var(--blue);
+  color: var(--green-dark);
   font-size: clamp(28px, 5vw, 44px);
   line-height: 1.05;
 }
@@ -58,7 +66,7 @@ h1 {
 button {
   border: 0;
   border-radius: 8px;
-  background: var(--blue);
+  background: var(--green-dark);
   color: #ffffff;
   cursor: pointer;
   font-size: 15px;
@@ -70,7 +78,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
-  margin-bottom: 12px;
+  margin-top: 12px;
   padding: 14px;
 }
 
@@ -116,8 +124,7 @@ button {
   font-weight: 700;
 }
 
-.last-reading,
-.cards {
+.last-reading {
   display: grid;
   gap: 12px;
   margin-bottom: 12px;
@@ -127,15 +134,12 @@ button {
   grid-template-columns: 1fr;
 }
 
-.stats-cards {
-  grid-template-columns: repeat(3, 1fr);
-}
-
 .card,
 .panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
+  box-shadow: 0 8px 22px rgba(23, 49, 38, 0.07);
 }
 
 .card {
@@ -152,7 +156,7 @@ button {
 
 .card strong {
   display: block;
-  color: var(--blue);
+  color: var(--green-dark);
   font-size: clamp(25px, 4vw, 40px);
   line-height: 1;
 }
@@ -165,8 +169,52 @@ button {
 }
 
 .card-primary {
-  background: var(--blue-soft);
-  border-color: #b9d4ff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(232, 246, 239, 0.96)),
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(47, 107, 63, 0.08) 34px 36px);
+  border-color: #9fc9a8;
+}
+
+.last-reading .card-primary {
+  padding: clamp(24px, 5vw, 42px);
+  position: relative;
+  overflow: hidden;
+}
+
+.last-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(150px, 260px) 1fr;
+  align-items: center;
+  gap: clamp(18px, 5vw, 54px);
+}
+
+.last-reading-content {
+  text-align: center;
+}
+
+.last-reading .card-primary span {
+  color: var(--green-dark);
+  font-size: clamp(17px, 2.5vw, 24px);
+  letter-spacing: 0;
+}
+
+.cow-illustration {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 10px rgba(23, 49, 38, 0.12));
+}
+
+.last-reading .card-primary strong {
+  font-size: clamp(58px, 13vw, 112px);
+  letter-spacing: 0;
+}
+
+.last-reading .card-primary small {
+  color: var(--text);
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .panel {
@@ -183,7 +231,7 @@ button {
 }
 
 .panel h2 {
-  color: var(--blue);
+  color: var(--green-dark);
   font-size: 20px;
 }
 
@@ -245,26 +293,20 @@ th {
     grid-template-columns: 1fr;
   }
 
-  .stats-cards {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .stats-cards .card:last-child {
-    grid-column: span 2;
-  }
-
   .chart {
     min-height: 330px;
   }
 }
 
 @media (max-width: 460px) {
-  .stats-cards {
+  .last-reading-layout {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .stats-cards .card:last-child {
-    grid-column: auto;
+  .cow-illustration {
+    width: min(210px, 72vw);
+    justify-self: center;
   }
 
   .card {

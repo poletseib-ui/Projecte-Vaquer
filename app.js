@@ -1,10 +1,9 @@
 const CONFIG = {
-  defaultAppName: "Dashboard 1K",
+  defaultAppName: "Cercado electrico 1K",
   channelId: "2860284",
   fieldName: "field1",
   readApiKey: "UU4HPDW176EZ2FLK",
   results: 10,
-  timeOffsetHours: 2,
 };
 
 const state = {
@@ -21,9 +20,6 @@ const elements = {
   refreshButton: document.getElementById("refreshButton"),
   lastValue: document.getElementById("lastValue"),
   lastTime: document.getElementById("lastTime"),
-  maxValue: document.getElementById("maxValue"),
-  minValue: document.getElementById("minValue"),
-  avgValue: document.getElementById("avgValue"),
   chart: document.getElementById("chart"),
   readingsTable: document.getElementById("readingsTable"),
 };
@@ -33,7 +29,7 @@ function renderStaticText() {
 
   document.title = appName;
   elements.appTitle.textContent = appName;
-  elements.channelLabel.textContent = `ThingSpeak - Canal ${CONFIG.channelId}`;
+  elements.channelLabel.textContent = `Control del cercado - Canal ${CONFIG.channelId}`;
   elements.siteNameInput.value = state.siteName;
 }
 
@@ -62,32 +58,54 @@ function apiUrl() {
   return `https://api.thingspeak.com/channels/${CONFIG.channelId}/feeds.json?${params}`;
 }
 
-function addSpanishOffset(date) {
-  return new Date(date.getTime() + CONFIG.timeOffsetHours * 60 * 60 * 1000);
-}
-
 function formatKV(value) {
   return `${(value / 1000).toFixed(1)} kV`;
 }
 
+function isToday(date) {
+  const now = new Date();
+
+  return date.getDate() === now.getDate()
+    && date.getMonth() === now.getMonth()
+    && date.getFullYear() === now.getFullYear();
+}
+
 function formatDateTime(date) {
-  return new Intl.DateTimeFormat("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+  const time = new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   }).format(date);
+
+  if (isToday(date)) {
+    return `Hoy ${time}`;
+  }
+
+  const day = new Intl.DateTimeFormat("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+
+  return `${day} ${time}`;
 }
 
 function formatShortTime(date) {
-  return new Intl.DateTimeFormat("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
+  const time = new Intl.DateTimeFormat("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+
+  if (isToday(date)) {
+    return `Hoy ${time}`;
+  }
+
+  const day = new Intl.DateTimeFormat("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+  }).format(date);
+
+  return `${day} ${time}`;
 }
 
 async function loadReadings() {
@@ -118,7 +136,7 @@ async function loadReadings() {
         return {
           value: rawValue,
           valueKV: rawValue / 1000,
-          time: addSpanishOffset(utcTime),
+          time: utcTime,
         };
       })
       .filter(Boolean);
@@ -138,24 +156,17 @@ async function loadReadings() {
 }
 
 function render() {
-  renderCards();
+  renderLastReading();
   renderChart();
   renderTable();
 }
 
-function renderCards() {
+function renderLastReading() {
   const readings = state.readings;
-  const values = readings.map((item) => item.value);
   const last = readings[readings.length - 1];
-  const max = Math.max(...values);
-  const min = Math.min(...values);
-  const avg = values.reduce((sum, value) => sum + value, 0) / values.length;
 
   elements.lastValue.textContent = formatKV(last.value);
   elements.lastTime.textContent = formatDateTime(last.time);
-  elements.maxValue.textContent = formatKV(max);
-  elements.minValue.textContent = formatKV(min);
-  elements.avgValue.textContent = formatKV(avg);
 }
 
 function renderChart() {
@@ -225,10 +236,10 @@ function renderChart() {
       <style>
         .grid-line { stroke: #d9e2ef; stroke-width: 1; }
         .axis { stroke: #667085; stroke-width: 1.3; }
-        .line { fill: none; stroke: #062b67; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-        .point { fill: #ffffff; stroke: #062b67; stroke-width: 4; }
+        .line { fill: none; stroke: #174b2b; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+        .point { fill: #ffffff; stroke: #174b2b; stroke-width: 4; }
         .axis-label { fill: #667085; font-size: 14px; font-weight: 700; }
-        .value-label { fill: #062b67; font-size: 15px; font-weight: 700; }
+        .value-label { fill: #174b2b; font-size: 15px; font-weight: 700; }
         .x-label { fill: #172033; font-size: 13px; font-weight: 700; }
         .index-label { fill: #667085; font-size: 12px; }
       </style>
@@ -243,7 +254,9 @@ function renderChart() {
 }
 
 function renderTable() {
-  elements.readingsTable.innerHTML = state.readings
+  const readingsNewestFirst = [...state.readings].reverse();
+
+  elements.readingsTable.innerHTML = readingsNewestFirst
     .map((item, index) => `
       <tr>
         <td>${index + 1}</td>

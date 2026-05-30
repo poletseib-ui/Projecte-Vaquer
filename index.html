@@ -10,43 +10,24 @@
   <main class="app">
     <header class="hero">
       <div>
-        <p class="eyebrow" id="channelLabel">ThingSpeak</p>
+        <p class="eyebrow" id="channelLabel">Control del cercado</p>
         <h1 id="appTitle">Dashboard</h1>
       </div>
       <button id="refreshButton" type="button">Actualizar</button>
     </header>
 
-    <section class="site-editor" aria-label="Nombre del sitio">
-      <label for="siteNameInput">Sitio del sensor</label>
-      <div class="site-editor-row">
-        <input id="siteNameInput" type="text" placeholder="Ejemplo: Nave 1 - Cuadro principal">
-        <button id="saveSiteNameButton" type="button">Guardar nombre</button>
-      </div>
-      <small>El nombre se guarda en este dispositivo.</small>
-    </section>
-
     <section id="status" class="status" aria-live="polite">Cargando datos...</section>
 
     <section class="last-reading" aria-label="Ultima lectura">
       <article class="card card-primary">
-        <span>Ultima lectura</span>
-        <strong id="lastValue">--</strong>
-        <small id="lastTime">--</small>
-      </article>
-    </section>
-
-    <section class="cards stats-cards" aria-label="Resumen de lecturas">
-      <article class="card">
-        <span>Maximo</span>
-        <strong id="maxValue">--</strong>
-      </article>
-      <article class="card">
-        <span>Minimo</span>
-        <strong id="minValue">--</strong>
-      </article>
-      <article class="card">
-        <span>Promedio</span>
-        <strong id="avgValue">--</strong>
+        <div class="last-reading-layout">
+          <img class="cow-illustration" src="assets/cow.png" alt="">
+          <div class="last-reading-content">
+            <span>Tension actual del hilo</span>
+            <strong id="lastValue">--</strong>
+            <small id="lastTime">--</small>
+          </div>
+        </div>
       </article>
     </section>
 
@@ -54,17 +35,17 @@
       <div class="panel-header">
         <div>
           <h2>Ultimos 10 valores</h2>
-          <p>Voltage 1 representado en kV</p>
+          <p>Lecturas del hilo electrico representadas en kV</p>
         </div>
       </div>
-      <div id="chart" class="chart" role="img" aria-label="Grafico de los ultimos 10 valores de Voltage 1"></div>
+      <div id="chart" class="chart" role="img" aria-label="Grafico de los ultimos 10 valores de tension del hilo"></div>
     </section>
 
     <section class="panel">
       <div class="panel-header">
         <div>
           <h2>Lecturas</h2>
-          <p>Fecha y hora ajustadas a horario espanol</p>
+          <p>Fecha y hora en horario local</p>
         </div>
       </div>
       <div class="table-wrap">
@@ -73,12 +54,21 @@
             <tr>
               <th>#</th>
               <th>Fecha y hora</th>
-              <th>Voltage 1</th>
+              <th>Tension del hilo</th>
             </tr>
           </thead>
           <tbody id="readingsTable"></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="site-editor" aria-label="Nombre del sitio">
+      <label for="siteNameInput">Ubicacion del sensor</label>
+      <div class="site-editor-row">
+        <input id="siteNameInput" type="text" placeholder="Ejemplo: Zanja norte - Cerca vacas">
+        <button id="saveSiteNameButton" type="button">Guardar nombre</button>
+      </div>
+      <small>El nombre se guarda en este dispositivo.</small>
     </section>
   </main>
 
