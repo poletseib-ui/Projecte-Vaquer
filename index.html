@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="ca">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,20 +10,20 @@
   <main class="app">
     <header class="hero">
       <div>
-        <p class="eyebrow" id="channelLabel">Control del cercado</p>
+        <p class="eyebrow" id="channelLabel">Mas Serradell</p>
         <h1 id="appTitle">Dashboard</h1>
       </div>
-      <button id="refreshButton" type="button">Actualizar</button>
+      <button id="refreshButton" type="button">Actualitzar</button>
     </header>
 
-    <section id="status" class="status" aria-live="polite">Cargando datos...</section>
+    <section id="status" class="status" aria-live="polite">Carregant dades...</section>
 
     <section class="last-reading" aria-label="Ultima lectura">
       <article class="card card-primary">
         <div class="last-reading-layout">
           <img class="cow-illustration" src="cow.png" alt="">
           <div class="last-reading-content">
-            <span>Tension actual del hilo</span>
+            <span>Tensio actual del fil</span>
             <strong id="lastValue">--</strong>
             <small id="lastTime">--</small>
           </div>
@@ -34,18 +34,18 @@
     <section class="panel">
       <div class="panel-header">
         <div>
-          <h2>Ultimos 10 valores</h2>
-          <p>Lecturas del hilo electrico representadas en kV</p>
+          <h2>Ultimes 10 lectures</h2>
+          <p>Lectures del fil electric representades en kV</p>
         </div>
       </div>
-      <div id="chart" class="chart" role="img" aria-label="Grafico de los ultimos 10 valores de tension del hilo"></div>
+      <div id="chart" class="chart" role="img" aria-label="Grafic de les ultimes 10 lectures de tensio del fil"></div>
     </section>
 
     <section class="panel">
       <div class="panel-header">
         <div>
-          <h2>Lecturas</h2>
-          <p>Fecha y hora en horario local</p>
+          <h2>Lectures</h2>
+          <p>Data i hora en horari local</p>
         </div>
       </div>
       <div class="table-wrap">
@@ -53,8 +53,8 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Fecha y hora</th>
-              <th>Tension del hilo</th>
+              <th>Data i hora</th>
+              <th>Tensio del fil</th>
             </tr>
           </thead>
           <tbody id="readingsTable"></tbody>
@@ -62,13 +62,13 @@
       </div>
     </section>
 
-    <section class="site-editor" aria-label="Nombre del sitio">
-      <label for="siteNameInput">Ubicacion del sensor</label>
+    <section class="site-editor" aria-label="Nom del lloc">
+      <label for="siteNameInput">Ubicacio del sensor</label>
       <div class="site-editor-row">
-        <input id="siteNameInput" type="text" placeholder="Ejemplo: Zanja norte - Cerca vacas">
-        <button id="saveSiteNameButton" type="button">Guardar nombre</button>
+        <input id="siteNameInput" type="text" placeholder="Exemple: Rasa nord - Vaques">
+        <button id="saveSiteNameButton" type="button">Guardar nom</button>
       </div>
-      <small>El nombre se guarda en este dispositivo.</small>
+      <small>El nom es guarda en aquest dispositiu.</small>
     </section>
   </main>
 

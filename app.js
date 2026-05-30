@@ -1,5 +1,5 @@
 const CONFIG = {
-  defaultAppName: "Cercado electrico 1K",
+  defaultAppName: "Mas Serradell",
   channelId: "2860284",
   fieldName: "field1",
   readApiKey: "UU4HPDW176EZ2FLK",
@@ -29,7 +29,7 @@ function renderStaticText() {
 
   document.title = appName;
   elements.appTitle.textContent = appName;
-  elements.channelLabel.textContent = `Control del cercado - Canal ${CONFIG.channelId}`;
+  elements.channelLabel.textContent = `Mas Serradell - Canal ${CONFIG.channelId}`;
   elements.siteNameInput.value = state.siteName;
 }
 
@@ -71,17 +71,17 @@ function isToday(date) {
 }
 
 function formatDateTime(date) {
-  const time = new Intl.DateTimeFormat("es-ES", {
+  const time = new Intl.DateTimeFormat("ca-ES", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   }).format(date);
 
   if (isToday(date)) {
-    return `Hoy ${time}`;
+    return `Avui ${time}`;
   }
 
-  const day = new Intl.DateTimeFormat("es-ES", {
+  const day = new Intl.DateTimeFormat("ca-ES", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -91,16 +91,16 @@ function formatDateTime(date) {
 }
 
 function formatShortTime(date) {
-  const time = new Intl.DateTimeFormat("es-ES", {
+  const time = new Intl.DateTimeFormat("ca-ES", {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
 
   if (isToday(date)) {
-    return `Hoy ${time}`;
+    return `Avui ${time}`;
   }
 
-  const day = new Intl.DateTimeFormat("es-ES", {
+  const day = new Intl.DateTimeFormat("ca-ES", {
     day: "2-digit",
     month: "2-digit",
   }).format(date);
@@ -110,14 +110,14 @@ function formatShortTime(date) {
 
 async function loadReadings() {
   elements.status.classList.remove("error");
-  elements.status.textContent = "Cargando datos...";
+  elements.status.textContent = "Carregant dades...";
   elements.refreshButton.disabled = true;
 
   try {
     const response = await fetch(apiUrl(), { cache: "no-store" });
 
     if (!response.ok) {
-      throw new Error(`ThingSpeak respondió con estado ${response.status}`);
+      throw new Error(`ThingSpeak ha respost amb l'estat ${response.status}`);
     }
 
     const payload = await response.json();
@@ -142,13 +142,13 @@ async function loadReadings() {
       .filter(Boolean);
 
     if (state.readings.length === 0) {
-      throw new Error("No hay lecturas válidas para mostrar.");
+      throw new Error("No hi ha lectures valides per mostrar.");
     }
 
     render();
-    elements.status.textContent = `Actualizado: ${formatDateTime(new Date())}`;
+    elements.status.textContent = `Actualitzat: ${formatDateTime(new Date())}`;
   } catch (error) {
-    elements.status.textContent = `Error al cargar datos: ${error.message}`;
+    elements.status.textContent = `Error en carregar les dades: ${error.message}`;
     elements.status.classList.add("error");
   } finally {
     elements.refreshButton.disabled = false;
@@ -171,14 +171,18 @@ function renderLastReading() {
 
 function renderChart() {
   const readings = state.readings;
-  const width = 940;
+  const isMobile = window.matchMedia("(max-width: 760px)").matches;
+  const width = isMobile ? 680 : 940;
   const height = 430;
   const padding = {
     top: 36,
-    right: 26,
+    right: isMobile ? 18 : 26,
     bottom: 86,
-    left: 64,
+    left: isMobile ? 54 : 64,
   };
+  const labelFontSize = isMobile ? 17 : 15;
+  const axisFontSize = isMobile ? 16 : 14;
+  const xFontSize = isMobile ? 15 : 13;
 
   const minY = Math.min(...readings.map((item) => item.valueKV));
   const maxY = Math.max(...readings.map((item) => item.valueKV));
@@ -238,9 +242,9 @@ function renderChart() {
         .axis { stroke: #667085; stroke-width: 1.3; }
         .line { fill: none; stroke: #174b2b; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
         .point { fill: #ffffff; stroke: #174b2b; stroke-width: 4; }
-        .axis-label { fill: #667085; font-size: 14px; font-weight: 700; }
-        .value-label { fill: #174b2b; font-size: 15px; font-weight: 700; }
-        .x-label { fill: #172033; font-size: 13px; font-weight: 700; }
+        .axis-label { fill: #667085; font-size: ${axisFontSize}px; font-weight: 700; }
+        .value-label { fill: #174b2b; font-size: ${labelFontSize}px; font-weight: 700; }
+        .x-label { fill: #172033; font-size: ${xFontSize}px; font-weight: 700; }
         .index-label { fill: #667085; font-size: 12px; }
       </style>
       ${gridLines}

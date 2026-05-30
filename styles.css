@@ -243,6 +243,8 @@ button {
 
 .chart {
   min-height: 390px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .chart svg {
@@ -295,6 +297,10 @@ th {
 
   .chart {
     min-height: 330px;
+  }
+
+  .chart svg {
+    min-width: 680px;
   }
 }
 
