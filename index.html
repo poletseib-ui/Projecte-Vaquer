@@ -4,52 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="styles.css?v=20260619-3">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="app">
-    <button id="backToSensorsButton" class="back-button is-hidden" type="button" aria-label="Tornar al selector de sensors" hidden>
-      <span aria-hidden="true">&larr;</span>
-      Sensors
-    </button>
-
     <header class="hero">
       <div>
         <p class="eyebrow" id="channelLabel">Mas Serradell</p>
         <h1 id="appTitle">Dashboard</h1>
       </div>
-      <div class="hero-actions">
-        <button id="refreshButton" type="button" hidden>Actualitzar</button>
-      </div>
+      <button id="refreshButton" type="button">Actualitzar</button>
     </header>
 
-    <section id="sensorMenu" class="sensor-menu" aria-label="Seleccio de sensor">
-      <div class="panel-header">
-        <div>
-          <h2>Selecciona el sensor</h2>
-          <p>Tria quin fil vols consultar al dashboard.</p>
+    <section id="status" class="status" aria-live="polite">Carregant dades...</section>
+
+    <section class="last-reading" aria-label="Ultima lectura">
+      <article class="card card-primary">
+        <div class="last-reading-layout">
+          <img class="cow-illustration" src="cow.png" alt="">
+          <div class="last-reading-content">
+            <span>Tensio actual del fil</span>
+            <strong id="lastValue">--</strong>
+            <small id="lastTime">--</small>
+          </div>
         </div>
-      </div>
-      <div id="sensorCards" class="sensor-cards"></div>
+      </article>
     </section>
 
-    <section id="dashboard" class="dashboard is-hidden">
-      <section id="status" class="status" aria-live="polite">Carregant dades...</section>
-
-      <section class="last-reading" aria-label="Ultima lectura">
-        <article class="card card-primary">
-          <div class="last-reading-layout">
-            <img id="cowImage" class="cow-illustration" src="cow-safe.png?v=20260619-3" alt="">
-            <div class="last-reading-content">
-              <span>Tensio actual del fil</span>
-              <strong id="lastValue">--</strong>
-              <small id="lastTime">--</small>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section class="panel">
+    <section class="panel">
       <div class="panel-header">
         <div>
           <h2>Ultimes 10 lectures</h2>
@@ -57,9 +39,9 @@
         </div>
       </div>
       <div id="chart" class="chart" role="img" aria-label="Grafic de les ultimes 10 lectures de tensio del fil"></div>
-      </section>
+    </section>
 
-      <section class="panel">
+    <section class="panel">
       <div class="panel-header">
         <div>
           <h2>Lectures</h2>
@@ -78,19 +60,18 @@
           <tbody id="readingsTable"></tbody>
         </table>
       </div>
-      </section>
+    </section>
 
-      <section class="site-editor" aria-label="Nom del lloc">
+    <section class="site-editor" aria-label="Nom del lloc">
       <label for="siteNameInput">Ubicacio del sensor</label>
       <div class="site-editor-row">
         <input id="siteNameInput" type="text" placeholder="Exemple: Rasa nord - Vaques">
         <button id="saveSiteNameButton" type="button">Guardar nom</button>
       </div>
       <small>El nom es guarda en aquest dispositiu.</small>
-      </section>
     </section>
   </main>
 
-  <script src="app.js?v=20260619-3"></script>
+  <script src="app.js"></script>
 </body>
 </html>

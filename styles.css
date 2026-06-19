@@ -4,11 +4,10 @@
   --panel: #ffffff;
   --text: #173126;
   --muted: #607368;
-  --blue: #174b2b;
+  --blue: #073f5f;
   --blue-soft: #e8f6ef;
   --green: #2f6b3f;
   --green-dark: #174b2b;
-  --active-sensor-color: #174b2b;
   --line: #cfddd2;
   --danger: #b42318;
   font-family: Arial, Helvetica, sans-serif;
@@ -52,10 +51,6 @@ body {
   text-transform: uppercase;
 }
 
-.eyebrow:empty {
-  display: none;
-}
-
 h1,
 h2,
 p {
@@ -77,106 +72,6 @@ button {
   font-size: 15px;
   font-weight: 700;
   padding: 12px 16px;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.is-hidden {
-  display: none;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: auto;
-  border: 1px solid var(--line);
-  background: #ffffff;
-  color: var(--text);
-  margin-bottom: 10px;
-  padding: 10px 13px;
-}
-
-.back-button span {
-  font-size: 20px;
-  line-height: 1;
-}
-
-.sensor-menu {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
-  box-shadow: 0 8px 22px rgba(23, 49, 38, 0.07);
-  margin-bottom: 12px;
-  padding: 16px;
-}
-
-.sensor-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.sensor-card {
-  border: 1px solid #d4d9d6;
-  border-radius: 8px;
-  background: #f8faf9;
-  color: var(--text);
-  cursor: pointer;
-  padding: 18px;
-  position: relative;
-  text-align: left;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.sensor-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 6px;
-  border-radius: 8px 0 0 8px;
-  background: #9aa7a0;
-}
-
-.sensor-card:hover {
-  box-shadow: 0 10px 26px rgba(23, 49, 38, 0.13);
-  transform: translateY(-2px);
-}
-
-.sensor-card strong {
-  display: block;
-  color: var(--text);
-  font-size: 24px;
-  line-height: 1.1;
-  margin-bottom: 8px;
-  padding-left: 8px;
-}
-
-.sensor-card span {
-  display: block;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  padding-left: 8px;
-}
-
-.sensor-card small {
-  display: block;
-  color: #2c3a33;
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1.25;
-  padding-left: 8px;
 }
 
 .site-editor {
@@ -261,7 +156,7 @@ button {
 
 .card strong {
   display: block;
-  color: var(--active-sensor-color);
+  color: var(--green-dark);
   font-size: clamp(25px, 4vw, 40px);
   line-height: 1;
 }
@@ -298,7 +193,7 @@ button {
 }
 
 .last-reading .card-primary span {
-  color: var(--active-sensor-color);
+  color: var(--green-dark);
   font-size: clamp(17px, 2.5vw, 24px);
   letter-spacing: 0;
 }
@@ -336,7 +231,7 @@ button {
 }
 
 .panel h2 {
-  color: var(--active-sensor-color);
+  color: var(--green-dark);
   font-size: 20px;
 }
 
@@ -392,10 +287,6 @@ th {
     flex-direction: column;
   }
 
-  .hero-actions {
-    flex-direction: column;
-  }
-
   button {
     width: 100%;
   }
@@ -411,10 +302,6 @@ th {
   .chart svg {
     min-width: 680px;
   }
-
-  .sensor-cards {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 460px) {
@@ -427,7 +314,6 @@ th {
     width: min(210px, 72vw);
     justify-self: center;
   }
-
 
   .card {
     padding: 14px;
